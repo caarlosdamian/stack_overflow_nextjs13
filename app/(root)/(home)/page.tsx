@@ -4,6 +4,8 @@ import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import React from 'react';
 
+const filters = ['Neewest','Recommended','Frequent','Unanswered']
+
 const Home = () => {
   return (
     <>
@@ -23,7 +25,7 @@ const Home = () => {
           placeholder="Search for questions"
           otherClasses="flex-1"
         />
-        <Filters />
+        <Filters items={filters} />
       </div>
     </>
   );
