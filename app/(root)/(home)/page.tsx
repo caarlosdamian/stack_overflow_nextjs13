@@ -1,10 +1,10 @@
-import Filters from '@/components/shared/filters/Filters';
+import HomeFilters from '@/components/home/homeFilters/HomeFilters';
+import Filter from '@/components/shared/filter/Filter';
 import LocalSearch from '@/components/shared/search/LocalSearch';
 import { Button } from '@/components/ui/button';
+import { HomePageFilters } from '@/constants/filters';
 import Link from 'next/link';
 import React from 'react';
-
-const filters = ['Neewest','Recommended','Frequent','Unanswered']
 
 const Home = () => {
   return (
@@ -17,7 +17,7 @@ const Home = () => {
           </Button>
         </Link>
       </div>
-      <div className="mt-11 flex justify-between gap-5 max-sm:flex-col sm:items-center">
+      <div className="mt-11 flex justify-between gap-5 sm:flex-col sm:items-center">
         <LocalSearch
           route="/"
           iconPosition="left"
@@ -25,7 +25,12 @@ const Home = () => {
           placeholder="Search for questions"
           otherClasses="flex-1"
         />
-        <Filters items={filters} placeholder='Select a Filter'/>
+        <Filter
+          filters={HomePageFilters}
+          otherClasses="min-h-[56px] sm:min-w-[170px]"
+          containerClasses="hidden max-md:flex"
+        />
+        <HomeFilters/>
       </div>
     </>
   );
