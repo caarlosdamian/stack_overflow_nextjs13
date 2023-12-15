@@ -25,7 +25,7 @@ const Home = () => {
           placeholder="Search for questions"
           otherClasses="flex-1"
         />
-        <Filters items={filters} />
+        <Filters items={filters} placeholder='Select a Filter'/>
       </div>
     </>
   );
