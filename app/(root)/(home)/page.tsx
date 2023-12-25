@@ -1,4 +1,5 @@
 import HomeFilters from '@/components/home/homeFilters/HomeFilters';
+import { Card } from '@/components/shared/card/Card';
 import Filter from '@/components/shared/filter/Filter';
 import LocalSearch from '@/components/shared/search/LocalSearch';
 import { Button } from '@/components/ui/button';
@@ -30,7 +31,10 @@ const Home = () => {
           otherClasses="min-h-[56px] sm:min-w-[170px]"
           containerClasses="hidden max-md:flex"
         />
-        <HomeFilters/>
+        <HomeFilters />
+      </div>
+      <div className="mt-10 flex w-full flex-col gap-6">
+        <Card />
       </div>
     </>
   );
