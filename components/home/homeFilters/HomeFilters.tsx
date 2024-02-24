@@ -6,7 +6,7 @@ import React from 'react';
 const HomeFilters = () => {
   const isActive = 'newest';
   return (
-    <div className="mt-10 hidden flex-wrap gap-3 md:flex">
+    <div className="mt-10 hidden flex-wrap gap-3 self-start md:flex">
       {HomePageFilters.map((item) => (
         <Button
           className={`body-medium cursor-pointer rounded-lg px-6 py-3 capitalize shadow-none ${
