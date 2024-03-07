@@ -22,22 +22,22 @@ const Filter = ({
   containerClasses,
 }: Props) => {
   return (
-    <div className={`relative ${containerClasses}`}>
+    <div className={`relative w-full self-start ${containerClasses}`}>
       <Select>
         <SelectTrigger
           className={`${otherClasses} body-regular light-border background-light800_dark300 px-5 py-2.5`}
         >
-          <div className="line-clamp-1 flex-1 text-left">
+          <div className="text-dark100_light900 line-clamp-1 flex-1 text-left">
             <SelectValue placeholder={placeholder} />
           </div>
         </SelectTrigger>
-        <SelectContent>
-          <SelectGroup>
+        <SelectContent className='background-light800_dark400'>
+          <SelectGroup className='text-dark200_light900'>
             {filters.map(({ name, value }) => (
               <SelectItem
                 key={value}
                 value={value}
-                className="cursor-pointer hover:bg-slate-100"
+                className="hover:background-light800_dark400 cursor-pointer"
               >
                 {name}
               </SelectItem>
