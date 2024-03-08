@@ -1,5 +1,4 @@
 import HomeFilters from '@/components/home/homeFilters/HomeFilters';
-import { Card } from '@/components/shared/card/Card';
 import Filter from '@/components/shared/filter/Filter';
 import NoResult from '@/components/shared/noResult/NoResult';
 import QuestionCard from '@/components/cards/questionCard/QuestionCard';
@@ -63,7 +62,7 @@ const Home = () => {
     <>
       <div className="flex w-full flex-col-reverse justify-between gap-4 sm:flex-row sm:items-center">
         <h1 className="h1-bold text-dark100_light900">All Questions</h1>
-        <Link href="/ask-questions" className="flex justify-end max-sm:w-full">
+        <Link href="/ask-question" className="flex justify-end max-sm:w-full">
           <Button className="primary-gradient min-h-[46px] px-4 py-3 !text-light-900">
             Ask a question
           </Button>
@@ -83,11 +82,6 @@ const Home = () => {
           containerClasses="hidden max-md:flex"
         />
         <HomeFilters />
-<<<<<<< HEAD
-      </div>
-      <div className="mt-10 flex w-full flex-col gap-6">
-        <Card />
-=======
         <div className=" mt-10 flex w-full flex-col gap-6">
           {questions.length > 0 ? (
             questions.map((question) => (
@@ -114,7 +108,6 @@ const Home = () => {
             />
           )}
         </div>
->>>>>>> 081746d2f9e6c7dfacd9e86af18667d08769175c
       </div>
     </>
   );
