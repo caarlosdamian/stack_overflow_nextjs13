@@ -1,6 +1,6 @@
 import mongoose, { Document, Schema, models } from 'mongoose';
 
-interface IUser extends Document {
+export interface IUser extends Document {
   clerkId: string;
   name: string;
   username: string;

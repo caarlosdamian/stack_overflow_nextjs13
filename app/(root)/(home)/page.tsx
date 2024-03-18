@@ -7,57 +7,10 @@ import { Button } from '@/components/ui/button';
 import { HomePageFilters } from '@/constants/filters';
 import Link from 'next/link';
 import React from 'react';
+import { getQuestions } from '@/lib/actions/question.action';
 
-const questions = [
-  {
-    _id: 1,
-    title: 'Sample Title 1',
-    tags: [
-      {
-        _id: 101,
-        title: 'Tag 1',
-      },
-      {
-        _id: 102,
-        title: 'Tag 2',
-      },
-    ],
-    upvotes: 10234534,
-    answers: [],
-    createdAt: new Date('2023-12-25T00:00:00Z'),
-    views: 100,
-    author: {
-      _id: 'user1',
-      name: 'John Doe',
-      picture: 'https://example.com/user1.jpg',
-    },
-  },
-  {
-    _id: 2,
-    title: 'Sample Title 2',
-    tags: [
-      {
-        _id: 103,
-        title: 'Tag 3',
-      },
-      {
-        _id: 104,
-        title: 'Tag 4',
-      },
-    ],
-    upvotes: 5,
-    answers: [],
-    createdAt: new Date('2023-01-15T08:30:00Z'),
-    views: 50,
-    author: {
-      _id: 'user2',
-      name: 'Jane Smith',
-      picture: 'https://example.com/user2.jpg',
-    },
-  },
-];
-
-const Home = () => {
+const Home = async () => {
+  const { questions } = await getQuestions({});
   return (
     <>
       <div className="flex w-full flex-col-reverse justify-between gap-4 sm:flex-row sm:items-center">
@@ -94,7 +47,7 @@ const Home = () => {
                 upvotes={question.upvotes}
                 views={question.views}
                 answers={question.answers}
-                createdAt={question.createdAt}
+                createdAt={question.created_at}
               />
             ))
           ) : (
