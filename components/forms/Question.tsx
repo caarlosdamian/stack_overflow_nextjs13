@@ -20,7 +20,7 @@ import { z } from 'zod';
 import { Badge } from '../ui/badge';
 import Image from 'next/image';
 import { createquestion } from '@/lib/actions/question.action';
-import { useRouter, usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 
 const type: any = 'create';
 
@@ -28,7 +28,7 @@ export const Question = ({ mongoUserId }: { mongoUserId: string }) => {
   const editorRef = useRef(null);
   const [isSubiting, setIsSubiting] = useState(false);
   const router = useRouter();
-  const pathname = usePathname();
+  const pathName = usePathname();
 
   const form = useForm<z.infer<typeof questionSchema>>({
     resolver: zodResolver(questionSchema),
@@ -45,13 +45,12 @@ export const Question = ({ mongoUserId }: { mongoUserId: string }) => {
       // make an async call to your api
       // contain all form data
       // navigate to home page
-      console.log('values+++++', values);
       await createquestion({
         title: values.title,
         content: values.explanation,
         tags: values.tags,
         author: JSON.parse(mongoUserId),
-        path: pathname,
+        path: pathName,
       });
       router.push('/');
     } catch (error) {

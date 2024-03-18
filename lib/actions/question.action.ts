@@ -5,6 +5,7 @@ import { connectToDataBase } from '../mongoose';
 import Tag from '@/database/tag.model';
 import { CreateQuestionParams, GetQuestionsParams } from './shared.types';
 import User from '@/database/user.model';
+import { revalidatePath } from 'next/cache';
 
 export const getQuestions = async (params: GetQuestionsParams) => {
   try {
@@ -14,7 +15,8 @@ export const getQuestions = async (params: GetQuestionsParams) => {
         path: 'tags',
         model: Tag,
       })
-      .populate({ path: 'author', model: User });
+      .populate({ path: 'author', model: User })
+      .sort({ createdAt: -1 });
     return { questions };
   } catch (error) {
     console.log(error);
@@ -25,7 +27,7 @@ export const getQuestions = async (params: GetQuestionsParams) => {
 export const createquestion = async (params: CreateQuestionParams) => {
   try {
     await connectToDataBase();
-    const { title, content, tags, author } = params;
+    const { title, content, tags, author, path } = params;
     const question = await Question.create({
       title,
       content,
@@ -53,7 +55,7 @@ export const createquestion = async (params: CreateQuestionParams) => {
     await Question.findByIdAndUpdate(question._id, {
       $push: { tags: { $each: tagDocuments } },
     });
-
+    revalidatePath(path);
     // create interation record
     // increment authors reputation
   } catch (error) {}

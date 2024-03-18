@@ -15,7 +15,7 @@ const TagSchema = new Schema<ITag>(
     questions: [{ type: Schema.Types.ObjectId, ref: 'Question' }],
     followers: [{ type: Schema.Types.ObjectId, ref: 'User' }],
   },
-  { timestamps: { createdAt: 'created_at' } }
+  { timestamps: true }
 );
 
 const Tag = models.Tag || mongoose.model('Tag', TagSchema);

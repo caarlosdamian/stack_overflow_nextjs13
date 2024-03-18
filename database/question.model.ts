@@ -24,7 +24,7 @@ const questionSchema = new Schema<IQuestion>(
     views: { type: Number, require: true, default: 0 },
     answers: [{ type: mongoose.Types.ObjectId, ref: 'Answer' }],
   },
-  { timestamps: { createdAt: 'created_at' } }
+  { timestamps: true }
 );
 
 const Question = models.Question || mongoose.model('Question', questionSchema);

@@ -47,7 +47,7 @@ const Home = async () => {
                 upvotes={question.upvotes}
                 views={question.views}
                 answers={question.answers}
-                createdAt={question.created_at}
+                createdAt={question.createdAt}
               />
             ))
           ) : (

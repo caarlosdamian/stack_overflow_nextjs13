@@ -31,7 +31,7 @@ const userSchema = new Schema<IUser>(
     location: { type: String },
     joinedAt: { type: Date, required: true, default: Date.now() },
   },
-  { timestamps: { createdAt: 'created_at' } }
+  { timestamps: true }
 );
 
 const User = models.User || mongoose.model('User', userSchema);
