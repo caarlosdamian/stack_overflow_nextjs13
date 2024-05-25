@@ -25,7 +25,7 @@ const Page = async () => {
           otherClasses="min-h-[56px] sm:min-w-[170px]"
         />
       </div>
-      <section className="mr-12 flex flex-wrap gap-4">
+      <section className="mt-12 flex flex-wrap gap-4">
         {users.length > 0 ? (
           users.map((user) => <UserCard key={user._id} user={user}/>)
         ) : (
