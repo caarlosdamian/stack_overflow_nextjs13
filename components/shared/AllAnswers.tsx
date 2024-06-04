@@ -6,6 +6,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { getTimestamp } from '@/lib/utils';
 import ParseHTML from './ParseHTML';
+import Votes from './Votes';
 
 interface Props {
   questionId: string;
@@ -15,7 +16,7 @@ interface Props {
 
 const AllAnswers = async ({ userId, totalAnswers, questionId }: Props) => {
   const result = await getAnswers({ questionId });
-  console.log(result);
+
   return (
     <div className="mt-11">
       <div className="flex items-center justify-between">
@@ -27,7 +28,7 @@ const AllAnswers = async ({ userId, totalAnswers, questionId }: Props) => {
           <article key={answer._id} className="light-border border-b py-10">
             <div className="flex items-center justify-between">
               {/* Span id */}
-              <div className="mb-8 flex flex-col-reverse justify-between gap-5 sm:flex-row sm:items-center sm:gap-2">
+              <div className="mb-8 flex w-full flex-col-reverse justify-between gap-5 sm:flex-row sm:items-center sm:gap-2">
                 <Link
                   href={`/profile/${answer.clerkId}`}
                   className="flex flex-1 items-start gap-1 sm:items-center"
@@ -50,11 +51,19 @@ const AllAnswers = async ({ userId, totalAnswers, questionId }: Props) => {
                   </p>
                 </Link>
                 <div className="flex justify-end">
-                  VOTING
+                  <Votes
+                    type="answer"
+                    itemId={answer?._id}
+                    userId={userId}
+                    upvotes={answer?.upvotes?.length || 0}
+                    hasupVoted={answer?.upvotes?.includes(userId)}
+                    downVotes={answer?.downvotes?.length || 0}
+                    hasdownVoted={answer?.downvotes?.includes(userId)}
+                  />
                 </div>
               </div>
             </div>
-              <ParseHTML data={answer.content}/>
+            <ParseHTML data={answer.content} />
           </article>
         ))}
       </div>
