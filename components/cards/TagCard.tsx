@@ -13,7 +13,7 @@ interface Props {
 const TagCard = async ({ tag }: Props) => {
   return (
     <Link
-      href={tag._id}
+      href={`/tags/${tag._id}`}
       className="shadow-light100_darknone w-full max-xs:min-w-full xs:w-[260px]"
     >
       <article className="background-light900_dark200 light-border flex w-full flex-col items-start rounded-2xl border p-8">

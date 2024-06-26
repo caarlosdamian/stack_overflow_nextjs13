@@ -4,7 +4,6 @@ import NoResult from '@/components/shared/NoResult';
 import LocalSearchbar from '@/components/shared/search/LocalSearchbar';
 import { TagFilters } from '@/constants/filters';
 import { getAllTags } from '@/lib/actions/tag.action';
-import { Link } from 'lucide-react';
 import React from 'react';
 
 const Tags = async () => {
