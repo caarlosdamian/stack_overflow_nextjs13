@@ -42,12 +42,11 @@ export async function createQuestion(params: CreateQuestionParams) {
     });
 
     const tagDocuments = [];
-
     // Create the tags or get them if they already exist
     for (const tag of tags) {
       const existingTag = await Tag.findOneAndUpdate(
         { name: { $regex: new RegExp(`^${tag}$`, 'i') } },
-        { $setOnInsert: { name: tag }, $push: { question: question._id } },
+        { $setOnInsert: { name: tag }, $push: { questions: question._id } },
         { upsert: true, new: true }
       );
 
@@ -72,11 +71,14 @@ export async function getQuestionById(params: GetQuestionByIdParams) {
     const { questionId } = params;
 
     const question = await Question.findById(questionId)
-      .populate({ path: 'tags', model: Tag, select: '_id name' })
       .populate({
         path: 'author',
         model: User,
-        select: '_id clerkId name picture',
+        select: '_id clerkId name username picture',
+      })
+      .populate({
+        path: 'tags',
+        model: Tag,
       });
 
     return question;

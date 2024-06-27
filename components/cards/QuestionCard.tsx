@@ -13,7 +13,8 @@ interface QuestionProps {
   }[];
   author: {
     _id: string;
-    name: string;
+    name?: string;
+    username?: string;
     picture: string;
   };
   upvotes: Array<object>;
@@ -59,7 +60,7 @@ const QuestionCard = ({
         <Metric
           imgUrl={author.picture}
           alt="user"
-          value={author.name}
+          value={author.username}
           title={` - asked ${getTimestamp(createdAt)}`}
           href={`/profile/${author._id}`}
           isAuthor

@@ -17,11 +17,13 @@ import React from 'react';
 const Page = async ({ params }: ParamsProps) => {
   const question = await getQuestionById({ questionId: params.id });
   const { userId: clerkId } = auth();
-
+  
   let mongoUser;
   if (clerkId) {
     mongoUser = await getUserById({ userId: clerkId });
   }
+
+  console.log('++++',question)
 
   return (
     <>
@@ -39,7 +41,7 @@ const Page = async ({ params }: ParamsProps) => {
               alt="Profile photo"
             />
             <p className="paragraph-semibold text-dark300_light700">
-              {question.author.name}
+              {question.author.username}
             </p>
           </Link>
           <div className="flex justify-end">

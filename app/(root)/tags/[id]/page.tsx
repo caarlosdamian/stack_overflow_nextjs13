@@ -1,33 +1,40 @@
 import QuestionCard from '@/components/cards/QuestionCard';
-import HomeFilters from '@/components/home/HomeFilters';
-import Filter from '@/components/shared/Filter';
 import NoResult from '@/components/shared/NoResult';
 import LocalSearchbar from '@/components/shared/search/LocalSearchbar';
-import { Button } from '@/components/ui/button';
-import { HomePageFilters } from '@/constants/filters';
+import { IQuestion } from '@/database/question.model';
 import { getQuestions } from '@/lib/actions/question.action';
-import Link from 'next/link';
+import { getQuestionsByTagId } from '@/lib/actions/tag.action';
+import console from 'console';
 
-export default async function Home() {
-  const result = await getQuestions({});
+export default async function Home({
+  searchParams,
+  params,
+}: {
+  params: { id: string };
+  searchParams: { q: string };
+}) {
+  const result = await getQuestionsByTagId({
+    tagId: params.id,
+    page: 1,
+    searchQuery: searchParams.q,
+  });
 
   return (
     <>
-      <h1 className="h1-bold text-dark100_light900">All Questions</h1>
-
+      <h1 className="h1-bold text-dark100_light900">{result.tagTitle}</h1>
       <div className="mt-11 flex justify-between gap-5 max-sm:flex-col sm:items-center">
         <LocalSearchbar
           route="/"
           iconPosition="left"
           imgSrc="/assets/icons/search.svg"
-          placeholder="Search for questions"
+          placeholder="Search tag questions"
           otherClasses="flex-1"
         />
       </div>
 
       <div className="mt-10 flex w-full flex-col gap-6">
         {result.questions.length > 0 ? (
-          result.questions.map((question) => (
+          result.questions.map((question: IQuestion) => (
             <QuestionCard
               key={question._id}
               _id={question._id}
@@ -42,7 +49,7 @@ export default async function Home() {
           ))
         ) : (
           <NoResult
-            title="There’s no question to show"
+            title="There’s no tag questions saved to show"
             description="Be the first to break the silence! 🚀 Ask a Question and kickstart the discussion. our query could be the next big thing others learn from. Get involved! 💡"
             link="/ask-question"
             linkTitle="Ask a Question"

@@ -7,7 +7,7 @@ import { getAllTags } from '@/lib/actions/tag.action';
 import React from 'react';
 
 const Tags = async () => {
-  const {tags} = await getAllTags({});
+  const { tags } = await getAllTags({});
 
   return (
     <>
@@ -29,7 +29,7 @@ const Tags = async () => {
       </div>
       <section className="mt-12 flex flex-wrap gap-4">
         {tags.length > 0 ? (
-          tags.map((tag) => <TagCard key={tag._id} tag={tag} />)
+          tags.map((tag: any) => <TagCard key={tag._id} tag={tag} />)
         ) : (
           <NoResult
             title="No Tags found"
