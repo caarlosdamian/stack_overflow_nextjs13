@@ -12,7 +12,7 @@ interface QuestionProps {
     name: string;
   }[];
   author: {
-    _id: string;
+    clerkId: string;
     name?: string;
     username?: string;
     picture: string;
@@ -53,7 +53,7 @@ const QuestionCard = ({
       <div className="mt-3.5 flex flex-wrap gap-2">
         {tags.map((tag) => (
           <RenderTag key={tag._id} _id={tag._id} name={tag.name} />
-        ))}
+      ))}
       </div>
 
       <div className="flex-between mt-6 w-full flex-wrap gap-3">
@@ -62,7 +62,7 @@ const QuestionCard = ({
           alt="user"
           value={author.username}
           title={` - asked ${getTimestamp(createdAt)}`}
-          href={`/profile/${author._id}`}
+          href={`/profile/${author.clerkId}`}
           isAuthor
           textStyles="body-medium text-dark400_light700"
         />

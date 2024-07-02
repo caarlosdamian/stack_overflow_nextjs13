@@ -7,23 +7,46 @@ import {
   DeleteUserParams,
   GetAllTagsParams,
   GetSavedQuestionsParams,
+  GetUserByIdParams,
   ToggleSaveQuestionParams,
   UpdateUserParams,
 } from './shared.types';
 import { revalidatePath } from 'next/cache';
-import Question from '@/database/question.model';
+import Question, { IQuestion } from '@/database/question.model';
 import Tag from '@/database/tag.model';
 import { FilterQuery } from 'mongoose';
+import Answer from '@/database/answer.model';
 
-export async function getUserById(params: any) {
+export async function getUserById(params: { userId: string }) {
   try {
     connectToDatabase();
 
     const { userId } = params;
 
-    const user = await User.findOne({ userId });
+    const user = await User.findOne({ clerkId: userId });
 
     return user;
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+}
+export async function getUserInfo(params: GetUserByIdParams) {
+  try {
+    connectToDatabase();
+
+    const { userId } = params;
+
+    const user = await User.findOne({ clerkId: userId });
+
+    if (!user) {
+      throw new Error('User not found');
+    }
+    const totalQuestions = await Question.countDocuments({ author: user._id });
+
+    const totalAnswers = await Answer.countDocuments({ author: user._id });
+
+    return { user, totalAnswers, totalQuestions };
   } catch (error) {
     console.log(error);
     throw error;
@@ -145,7 +168,11 @@ export async function getSavedQuestions(params: GetSavedQuestionsParams) {
       },
       populate: [
         { path: 'tags', model: Tag, select: '_id name' },
-        { path: 'author', model: User, select: '_id clerkId name username picture' },
+        {
+          path: 'author',
+          model: User,
+          select: '_id clerkId name username picture',
+        },
       ],
     });
 
@@ -159,6 +186,42 @@ export async function getSavedQuestions(params: GetSavedQuestionsParams) {
   } catch (error) {
     console.log(error);
     throw error;
+  }
+}
+
+export async function getUserQuestions({
+  clerkId,
+  filter,
+  page = 1,
+  pageSize = 10,
+  searchQuery,
+}: GetSavedQuestionsParams) {
+  try {
+    connectToDatabase();
+    const user = await User.findOne({ clerkId });
+
+    if (!user) {
+      throw new Error('User not found');
+    }
+
+    const questions = await Question.find({ author: user._id })
+      .populate({ path: 'tags', model: Tag })
+      .populate({ path: 'author', model: User })
+      .sort({ createdAt: -1 })
+      .skip(pageSize * (page - 1))
+      .limit(pageSize);
+    if (!questions) {
+      throw new Error('Questions not found');
+    }
+    const count = await Question.countDocuments();
+    const totalPages = Math.ceil(count / pageSize);
+
+    return {
+      questions,
+      totalPages,
+    };
+  } catch (error) {
+    console.log(error);
   }
 }
 
