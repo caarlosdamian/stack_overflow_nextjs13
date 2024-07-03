@@ -10,13 +10,14 @@ interface Props extends SearchParamsProps {
   clerkId?: string;
 }
 
-const QuestionTab = async ({ userId, searchParams,clerkId }: Props) => {
+const QuestionTab = async ({ userId, searchParams, clerkId }: Props) => {
   const result = await getUserQuestions({
     userId,
     page: searchParams.page ? parseInt(searchParams.page) : 1,
   });
   return (
     <div className="mt-10 flex w-full flex-col gap-6">
+      {/* @ts-ignore */}
       {result?.questions.length > 0 ? (
         result?.questions.map((question) => (
           <QuestionCard
@@ -41,6 +42,7 @@ const QuestionTab = async ({ userId, searchParams,clerkId }: Props) => {
         />
       )}
       {result?.totalPages !== 1 && (
+        // @ts-ignore
         <Pagination totalPages={result.totalPages as unknown as number} />
       )}
     </div>

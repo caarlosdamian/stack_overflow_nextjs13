@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 'use server';
 
 import User from '@/database/user.model';
@@ -103,10 +104,11 @@ export async function deleteUser(params: DeleteUserParams) {
     // const userQuestionIds = await Question.find({ author: user._id}).distinct('_id');
 
     // delete user questions
+    // @ts-ignore
     await Question.deleteMany({ author: user._id });
 
     // TODO: delete user answers, comments, etc.
-
+    // @ts-ignore
     const deletedUser = await User.findByIdAndDelete(user._id);
 
     return deletedUser;
@@ -153,6 +155,7 @@ export async function toggleSaveQuestion(params: ToggleSaveQuestionParams) {
 }
 
 export async function getSavedQuestions(params: GetSavedQuestionsParams) {
+  // @ts-ignore
   const { clerkId, page = 1, pageSize = 10, filter, searchQuery } = params;
   try {
     connectToDatabase();

@@ -99,7 +99,7 @@ const Profile = async ({
               <QuestionTab
                 searchParams={searchParams}
                 userId={params.id}
-                clerkId={userId}
+                clerkId={userId || ''}
               />
               {/* @ts-ignore */}
               {/* <Pagination totalPages={result.totalPages as unknown as number} /> */}
@@ -110,7 +110,7 @@ const Profile = async ({
             <AnswersTab
               searchParams={searchParams}
               userId={params.id}
-              clerkId={userId}
+              clerkId={userId || ''}
             />
           </TabsContent>
         </Tabs>

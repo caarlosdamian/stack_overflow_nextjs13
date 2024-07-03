@@ -2,6 +2,7 @@ import Metric from '../shared/Metric';
 import { formatAndDivideNumber, getTimestamp } from '@/lib/utils';
 import { SignedIn } from '@clerk/nextjs';
 import EditDeleteAction from '../shared/EditDeleteAction';
+import Link from 'next/link';
 
 interface Props {
   clerkId?: string | null;
@@ -31,7 +32,7 @@ const AnswerCard = ({
   const showActionButtons = clerkId && clerkId === author.clerkId;
 
   return (
-    <div
+    <Link
       href={`/question/${question._id}/#${_id}`}
       className="card-wrapper rounded-[10px] px-11 py-9"
     >
@@ -71,7 +72,7 @@ const AnswerCard = ({
           />
         </div>
       </div>
-    </div>
+    </Link>
   );
 };
 

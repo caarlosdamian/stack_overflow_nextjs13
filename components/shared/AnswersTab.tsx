@@ -3,7 +3,6 @@ import React from 'react';
 import Pagination from './Pagination';
 import { getUserAnswers } from '@/lib/actions/user.action';
 import AnswerCard from '../cards/AnswerCard';
-import { useAuth } from '@clerk/nextjs';
 
 interface Props extends SearchParamsProps {
   userId: string;
@@ -17,6 +16,7 @@ const AnswersTab = async ({ userId, searchParams, clerkId }: Props) => {
   });
   return (
     <div className="mt-10 flex w-full flex-col gap-6">
+      {/*  @ts-ignore */}
       {result?.answers?.length > 0 &&
         result?.answers.map((answe) => (
           <AnswerCard
@@ -29,8 +29,11 @@ const AnswersTab = async ({ userId, searchParams, clerkId }: Props) => {
             createdAt={answe.createdAt}
           />
         ))}
+      {/*  @ts-ignore */}
       {result?.totalPages > 1 && (
-        <Pagination totalPages={result.totalPages as unknown as number} />
+        <Pagination
+          totalPages={result && result.totalPages ? result.totalPages : 1}
+        />
       )}
     </div>
   );

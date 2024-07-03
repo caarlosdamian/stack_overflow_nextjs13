@@ -12,7 +12,6 @@ import {
 } from './shared.types';
 import User from '@/database/user.model';
 import { revalidatePath } from 'next/cache';
-import { ObjectId } from 'mongoose';
 import Answer from '@/database/answer.model';
 import Interaction from '@/database/interaction.model';
 

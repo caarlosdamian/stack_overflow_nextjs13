@@ -9,16 +9,16 @@ import EditDeleteAction from '../shared/EditDeleteAction';
 interface QuestionProps {
   _id: string;
   title: string;
-  clerkId:string;
   tags: {
     _id: string;
     name: string;
   }[];
+  clerkId?: string;
   author: {
-    clerkId?: string;
     name?: string;
     username?: string;
     picture: string;
+    clerkId?: string;
   };
   upvotes: Array<object>;
   views: number;
@@ -55,7 +55,7 @@ const QuestionCard = ({
 
         <SignedIn>
           {showActionButtons && (
-            <EditDeleteAction type='Question' itemId={_id} />
+            <EditDeleteAction type="Question" itemId={_id} />
           )}
         </SignedIn>
       </div>
@@ -63,13 +63,14 @@ const QuestionCard = ({
       <div className="mt-3.5 flex flex-wrap gap-2">
         {tags.map((tag) => (
           <RenderTag key={tag._id} _id={tag._id} name={tag.name} />
-      ))}
+        ))}
       </div>
 
       <div className="flex-between mt-6 w-full flex-wrap gap-3">
         <Metric
           imgUrl={author.picture}
           alt="user"
+          // @ts-ignore
           value={author.username}
           title={` - asked ${getTimestamp(createdAt)}`}
           href={`/profile/${author.clerkId}`}

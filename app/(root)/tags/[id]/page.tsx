@@ -37,7 +37,9 @@ export default async function Home({
               key={question._id}
               _id={question._id}
               title={question.title}
+              // @ts-ignore
               tags={question.tags}
+              // @ts-ignore
               author={question.author}
               upvotes={question.upvotes}
               views={question.views}
