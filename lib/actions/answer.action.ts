@@ -3,6 +3,7 @@
 import {
   AnswerVoteParams,
   CreateAnswerParams,
+  DeleteAnswerParams,
   GetAnswersParams,
 } from './shared.types';
 import { connectToDatabase } from '../mongoose';
@@ -10,6 +11,7 @@ import Question from '@/database/question.model';
 import { revalidatePath } from 'next/cache';
 import User from '@/database/user.model';
 import Answer from '@/database/answer.model';
+import Interaction from '@/database/interaction.model';
 
 export async function createAnswer(params: CreateAnswerParams) {
   const { author, content, path, question } = params;
@@ -123,5 +125,27 @@ export async function donwvoteAnswer({
   } catch (error) {
     console.log(error);
     throw error;
+  }
+}
+
+export async function deleteAnswer({ answerId, path }: DeleteAnswerParams) {
+  try {
+    connectToDatabase();
+    const answer = await Answer.findById(answerId);
+
+    if (!answer) throw new Error('No Anwser found!');
+    await Answer.deleteOne({ _id: answerId });
+    await Question.updateMany(
+      { _id: answer.question },
+      {
+        $pull: {
+          answers: answerId,
+        },
+      }
+    );
+    await Interaction.deleteMany({ answer: answerId });
+    revalidatePath(path);
+  } catch (error) {
+    console.log(error);
   }
 }

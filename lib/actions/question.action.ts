@@ -5,12 +5,16 @@ import Tag from '@/database/tag.model';
 import { connectToDatabase } from '../mongoose';
 import {
   CreateQuestionParams,
+  DeleteQuestionParams,
   GetQuestionByIdParams,
   GetQuestionsParams,
   QuestionVoteParams,
 } from './shared.types';
 import User from '@/database/user.model';
 import { revalidatePath } from 'next/cache';
+import { ObjectId } from 'mongoose';
+import Answer from '@/database/answer.model';
+import Interaction from '@/database/interaction.model';
 
 export async function getQuestions(params: GetQuestionsParams) {
   try {
@@ -161,5 +165,40 @@ export async function donwvoteQuestion({
   } catch (error) {
     console.log(error);
     throw error;
+  }
+}
+
+export async function deleteQuestion({
+  path,
+  questionId,
+}: DeleteQuestionParams) {
+  try {
+    connectToDatabase();
+    // const question = await Question.findOneAndDelete({
+    //   _id: questionId,
+    // });
+    // if (!question) throw new Error('No Question found');
+    // question.tags.forEach(async (element: ObjectId) => {
+    //   const tag = await Tag.findOne(element);
+    //   tag.questions.remove(question._id);
+    //   tag.save();
+    // });
+    // if (question.answers.length !== 0) {
+    //   question.answers.forEach(async (element: ObjectId) => {
+    //     await Answer.findOneAndDelete(element);
+    //   });
+    // }
+    await Question.deleteOne({ _id: questionId });
+    await Answer.deleteMany({ question: questionId });
+    await Interaction.deleteMany({ question: questionId });
+    await Tag.updateMany(
+      { questions: questionId },
+      {
+        $pull: { questions: questionId },
+      }
+    );
+    revalidatePath(path);
+  } catch (error) {
+    console.log(error);
   }
 }

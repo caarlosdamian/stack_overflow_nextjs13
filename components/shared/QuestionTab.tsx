@@ -1,13 +1,24 @@
 import React from 'react';
 import QuestionCard from '../cards/QuestionCard';
 import NoResult from './NoResult';
+import { SearchParamsProps } from '@/types';
+import { getUserQuestions } from '@/lib/actions/user.action';
+import Pagination from './Pagination';
 
+interface Props extends SearchParamsProps {
+  userId: string;
+  clerkId?: string;
+}
 
-const QuestionTab = ({ questions }: { questions: any }) => {
+const QuestionTab = async ({ userId, searchParams,clerkId }: Props) => {
+  const result = await getUserQuestions({
+    userId,
+    page: searchParams.page ? parseInt(searchParams.page) : 1,
+  });
   return (
     <div className="mt-10 flex w-full flex-col gap-6">
-      {questions.length > 0 ? (
-        questions.map((question) => (
+      {result?.questions.length > 0 ? (
+        result?.questions.map((question) => (
           <QuestionCard
             key={question._id}
             _id={question._id}
@@ -18,6 +29,7 @@ const QuestionTab = ({ questions }: { questions: any }) => {
             views={question.views}
             answers={question.answers}
             createdAt={question.createdAt}
+            clerkId={clerkId}
           />
         ))
       ) : (
@@ -28,7 +40,9 @@ const QuestionTab = ({ questions }: { questions: any }) => {
           linkTitle="Ask a Question"
         />
       )}
-      {/* <button onClick={()=>goNext}>prueba</button> */}
+      {result?.totalPages !== 1 && (
+        <Pagination totalPages={result.totalPages as unknown as number} />
+      )}
     </div>
   );
 };

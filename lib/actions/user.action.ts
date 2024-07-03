@@ -8,11 +8,12 @@ import {
   GetAllTagsParams,
   GetSavedQuestionsParams,
   GetUserByIdParams,
+  GetUserStatsParams,
   ToggleSaveQuestionParams,
   UpdateUserParams,
 } from './shared.types';
 import { revalidatePath } from 'next/cache';
-import Question, { IQuestion } from '@/database/question.model';
+import Question from '@/database/question.model';
 import Tag from '@/database/tag.model';
 import { FilterQuery } from 'mongoose';
 import Answer from '@/database/answer.model';
@@ -190,15 +191,13 @@ export async function getSavedQuestions(params: GetSavedQuestionsParams) {
 }
 
 export async function getUserQuestions({
-  clerkId,
-  filter,
+  userId,
   page = 1,
   pageSize = 10,
-  searchQuery,
-}: GetSavedQuestionsParams) {
+}: GetUserStatsParams) {
   try {
     connectToDatabase();
-    const user = await User.findOne({ clerkId });
+    const user = await User.findOne({ clerkId: userId });
 
     if (!user) {
       throw new Error('User not found');
@@ -207,13 +206,13 @@ export async function getUserQuestions({
     const questions = await Question.find({ author: user._id })
       .populate({ path: 'tags', model: Tag })
       .populate({ path: 'author', model: User })
-      .sort({ createdAt: -1 })
+      .sort({ views: -1, upvotes: -1 })
       .skip(pageSize * (page - 1))
       .limit(pageSize);
     if (!questions) {
       throw new Error('Questions not found');
     }
-    const count = await Question.countDocuments();
+    const count = await Question.countDocuments({ author: user._id });
     const totalPages = Math.ceil(count / pageSize);
 
     return {
@@ -224,6 +223,41 @@ export async function getUserQuestions({
     console.log(error);
   }
 }
+
+export const getUserAnswers = async ({
+  userId,
+  page = 1,
+  pageSize = 10,
+}: GetUserStatsParams) => {
+  try {
+    connectToDatabase();
+    const user = await User.findOne({ clerkId: userId });
+
+    if (!user) throw new Error('User not found');
+
+    const answers = await Answer.find({ author: user._id })
+      .populate({
+        path: 'author',
+        model: User,
+      })
+      .populate({
+        path: 'question',
+        model: Question,
+        select: '_id title',
+      })
+      .sort({ upvotes: -1 })
+      .skip(pageSize * (page - 1))
+      .limit(pageSize);
+    const totalAnswers = await Answer.countDocuments({ author: user._id });
+    const totalPages = Math.ceil(totalAnswers / pageSize);
+    return {
+      answers,
+      totalPages,
+    };
+  } catch (error) {
+    console.log(error);
+  }
+};
 
 // export async function getAllUsers(params: GetAllTagsParams) {
 //   try {

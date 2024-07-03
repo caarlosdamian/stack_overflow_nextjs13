@@ -2,9 +2,7 @@ import QuestionCard from '@/components/cards/QuestionCard';
 import NoResult from '@/components/shared/NoResult';
 import LocalSearchbar from '@/components/shared/search/LocalSearchbar';
 import { IQuestion } from '@/database/question.model';
-import { getQuestions } from '@/lib/actions/question.action';
 import { getQuestionsByTagId } from '@/lib/actions/tag.action';
-import console from 'console';
 
 export default async function Home({
   searchParams,

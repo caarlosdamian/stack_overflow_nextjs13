@@ -1,10 +1,10 @@
-import Pagination from '@/components/shared/Pagination';
+import AnswersTab from '@/components/shared/AnswersTab';
 import ProfileLink from '@/components/shared/ProfileLink';
 import QuestionTab from '@/components/shared/QuestionTab';
 import Stats from '@/components/shared/Stats';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { getUserInfo, getUserQuestions } from '@/lib/actions/user.action';
+import { getUserInfo } from '@/lib/actions/user.action';
 import { getMonthYear } from '@/lib/utils';
 import { SignedIn, auth } from '@clerk/nextjs';
 import Image from 'next/image';
@@ -20,10 +20,6 @@ const Profile = async ({
 }) => {
   const { userId } = auth();
   const userInfo = await getUserInfo({ userId: params.id });
-  const result = await getUserQuestions({
-    clerkId: params.id,
-    page: searchParams.page ? parseInt(searchParams.page) : 1,
-  });
 
   return (
     <>
@@ -100,13 +96,23 @@ const Profile = async ({
           <TabsContent value="top-posts">
             <div className="flex flex-col items-center justify-center gap-14">
               {/* @ts-ignore */}
-              <QuestionTab questions={result.questions} />
+              <QuestionTab
+                searchParams={searchParams}
+                userId={params.id}
+                clerkId={userId}
+              />
               {/* @ts-ignore */}
-              <Pagination totalPages={result.totalPages as unknown as number} />
+              {/* <Pagination totalPages={result.totalPages as unknown as number} /> */}
             </div>
             <div />
           </TabsContent>
-          <TabsContent value="answers">Change your password here.</TabsContent>
+          <TabsContent value="answers" className="w-full">
+            <AnswersTab
+              searchParams={searchParams}
+              userId={params.id}
+              clerkId={userId}
+            />
+          </TabsContent>
         </Tabs>
       </div>
     </>
