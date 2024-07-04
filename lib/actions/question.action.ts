@@ -1,11 +1,12 @@
 'use server';
 
 import Question from '@/database/question.model';
-import Tag from '@/database/tag.model';
+import Tag, { ITag } from '@/database/tag.model';
 import { connectToDatabase } from '../mongoose';
 import {
   CreateQuestionParams,
   DeleteQuestionParams,
+  EditQuestionParams,
   GetQuestionByIdParams,
   GetQuestionsParams,
   QuestionVoteParams,
@@ -14,6 +15,8 @@ import User from '@/database/user.model';
 import { revalidatePath } from 'next/cache';
 import Answer from '@/database/answer.model';
 import Interaction from '@/database/interaction.model';
+import console from 'console';
+import { ObjectId } from 'mongoose';
 
 export async function getQuestions(params: GetQuestionsParams) {
   try {
@@ -196,6 +199,66 @@ export async function deleteQuestion({
         $pull: { questions: questionId },
       }
     );
+    revalidatePath(path);
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+export async function editQuestion({
+  content,
+  path,
+  questionId,
+  tags,
+  title,
+}: EditQuestionParams) {
+  try {
+    const question = await Question.findByIdAndUpdate(
+      questionId,
+      {
+        content,
+        title,
+      },
+      { new: true }
+    ).populate({
+      path: 'tags',
+      model: Tag,
+    });
+
+    const actualTags = question.tags.map((item: ITag) => item.name);
+    const removedTags = question.tags
+      .filter((item: ITag) => !tags.includes(item.name))
+      .map((element: ITag) => element._id);
+
+    const newtags = tags.filter((item) => !actualTags.includes(item));
+
+    if (removedTags.length !== 0) {
+      await Question.findByIdAndUpdate(question._id, {
+        $pullAll: { tags: removedTags },
+      });
+      removedTags.forEach(async (element: ObjectId) => {
+        await Tag.findByIdAndUpdate(element, {
+          $pull: { questions: questionId },
+        });
+      });
+    }
+
+    if (newtags.length !== 0) {
+      const tagDocuments = [];
+      for (const tag of newtags) {
+        const existingTag = await Tag.findOneAndUpdate(
+          { name: { $regex: new RegExp(`^${tag}$`, 'i') } },
+          { $setOnInsert: { name: tag }, $push: { questions: question._id } },
+          { upsert: true, new: true }
+        );
+
+        tagDocuments.push(existingTag._id);
+      }
+
+      await Question.findByIdAndUpdate(question._id, {
+        $push: { tags: { $each: tagDocuments } },
+      });
+    }
     revalidatePath(path);
   } catch (error) {
     console.log(error);
