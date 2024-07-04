@@ -22,15 +22,19 @@ import { createQuestion, editQuestion } from '@/lib/actions/question.action';
 import { useRouter, usePathname } from 'next/navigation';
 import { useTheme } from '@/context/ThemeProvider';
 
-const type: any = 'create';
-
 interface Props {
   mongoUserId: string;
   defaultValues?: z.infer<typeof QuestionsSchema>;
   questionId?: string;
+  type?: 'create' | 'edit';
 }
 
-const Question = ({ mongoUserId, defaultValues, questionId = '' }: Props) => {
+const Question = ({
+  mongoUserId,
+  defaultValues,
+  questionId = '',
+  type = 'create',
+}: Props) => {
   const editorRef = useRef(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const router = useRouter();
@@ -53,7 +57,7 @@ const Question = ({ mongoUserId, defaultValues, questionId = '' }: Props) => {
     try {
       // make an async call to your API -> create a question
       // contain all form data
-      if (defaultValues) {
+      if (type === 'edit') {
         await editQuestion({
           title: values.title,
           content: values.explanation,
@@ -61,6 +65,7 @@ const Question = ({ mongoUserId, defaultValues, questionId = '' }: Props) => {
           path: pathname,
           questionId,
         });
+        router.push(`/question/${questionId}`);
       } else {
         await createQuestion({
           title: values.title,
@@ -69,10 +74,10 @@ const Question = ({ mongoUserId, defaultValues, questionId = '' }: Props) => {
           author: JSON.parse(mongoUserId),
           path: pathname,
         });
+        router.push('/');
       }
 
       // navigate to home page
-      router.push('/');
     } catch (error) {
     } finally {
       setIsSubmitting(false);

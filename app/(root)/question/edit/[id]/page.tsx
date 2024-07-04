@@ -13,7 +13,7 @@ export default async function EditPage({
 }) {
   const { userId } = auth();
 
-  if (!userId) redirect('/sign-in');
+  if (!userId) redirect('/');
 
   const mongoUser = await getUserById({ userId });
   const question = await getQuestionById({ questionId: id });
@@ -32,8 +32,8 @@ export default async function EditPage({
           <Question
             mongoUserId={JSON.stringify(mongoUser?._id)}
             defaultValues={defaultValues}
-            // teste={defaultValues}
             questionId={id}
+            type='edit'
           />
         </div>
       )}
