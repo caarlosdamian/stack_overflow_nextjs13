@@ -264,3 +264,18 @@ export async function editQuestion({
     console.log(error);
   }
 }
+
+export async function getHotQuestions() {
+  try {
+    connectToDatabase();
+    const questions = await Question.find()
+      .sort({
+        views: -1,
+        upvotes: -1,
+      })
+      .limit(5);
+    return questions;
+  } catch (error) {
+    console.log(error);
+  }
+}

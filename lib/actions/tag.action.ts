@@ -68,7 +68,11 @@ export async function getQuestionsByTagId(params: GetQuestionsByTagIdParams) {
       },
       populate: [
         { path: 'tags', model: Tag, select: '_id name' },
-        { path: 'author', model: User, select: '_id clerkId  username name picture' },
+        {
+          path: 'author',
+          model: User,
+          select: '_id clerkId  username name picture',
+        },
       ],
     });
 
@@ -80,5 +84,21 @@ export async function getQuestionsByTagId(params: GetQuestionsByTagIdParams) {
   } catch (error) {
     console.log(error);
     throw error;
+  }
+}
+
+export async function getHotAnswers() {
+  try {
+    connectToDatabase();
+    const tags = await Tag.find()
+      .sort({
+        questions: -1,
+      })
+      .limit(5)
+      .populate({ path: 'questions', model: Question });
+
+    return tags;
+  } catch (error) {
+    console.log(error);
   }
 }
