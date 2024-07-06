@@ -90,12 +90,17 @@ export async function getQuestionsByTagId(params: GetQuestionsByTagIdParams) {
 export async function getHotAnswers() {
   try {
     connectToDatabase();
-    const tags = await Tag.find()
-      .sort({
-        questions: -1,
-      })
-      .limit(5)
-      .populate({ path: 'questions', model: Question });
+    const tags = await Tag.aggregate([
+      { $project: { name: 1, numberOfQuestion: { $size: '$questions' } } },
+      { $sort: { numberOfQuestion: -1 } },
+      { $limit: 5 },
+    ]);
+    // .find()
+    //   .sort({
+    //     questions: -1,
+    //   })
+    //   .limit(5)
+    //   .populate({ path: 'questions', model: Question });
 
     return tags;
   } catch (error) {
