@@ -38,11 +38,8 @@ const Profile = ({ defaultValues, userId }: Props) => {
     },
   });
 
-  console.log(form.formState);
-  console.log(form.watch())
 
   const onSubmit = async (values: z.infer<typeof ProfileSchema>) => {
-    console.log('Entrnado')
     setIsSubmitting(true);
     try {
       await updateUser({ clerkId: userId, path: pathname, updateData: values });
