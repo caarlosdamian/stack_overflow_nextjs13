@@ -28,11 +28,24 @@ export async function getTopInteractedTags(params: GetTopInteractedTagsParams) {
   }
 }
 
-export async function getAllTags(params: GetAllTagsParams) {
+export async function getAllTags({
+  filter,
+  page = 1,
+  pageSize = 10,
+  searchQuery,
+}: GetAllTagsParams) {
   try {
     connectToDatabase();
 
-    const tags = await Tag.find({}).populate({
+    const query: FilterQuery<typeof Tag> = {};
+
+    if (searchQuery) {
+      query.$or = [
+        { name: { $regex: new RegExp(searchQuery, 'i') } },
+      ];
+    }
+
+    const tags = await Tag.find(query).populate({
       path: 'questions',
       model: Question,
     });
