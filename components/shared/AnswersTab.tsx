@@ -12,7 +12,7 @@ interface Props extends SearchParamsProps {
 const AnswersTab = async ({ userId, searchParams, clerkId }: Props) => {
   const result = await getUserAnswers({
     userId,
-    page: searchParams?.page ? parseInt(searchParams.page) : 1,
+    page: searchParams?.page ? +searchParams.page : 1,
   });
   return (
     <div className="mt-10 flex w-full flex-col gap-6">
@@ -30,11 +30,7 @@ const AnswersTab = async ({ userId, searchParams, clerkId }: Props) => {
           />
         ))}
       {/*  @ts-ignore */}
-      {result?.totalPages > 1 && (
-        <Pagination
-          totalPages={result && result.totalPages ? result.totalPages : 1}
-        />
-      )}
+      <Pagination isNext={result.isNext} />
     </div>
   );
 };

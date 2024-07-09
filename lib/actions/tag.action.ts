@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import User from '@/database/user.model';
 import { connectToDatabase } from '../mongoose';
 import {
@@ -31,7 +30,7 @@ export async function getTopInteractedTags(params: GetTopInteractedTagsParams) {
 export async function getAllTags({
   filter,
   page = 1,
-  pageSize = 10,
+  pageSize = 9,
   searchQuery,
 }: GetAllTagsParams) {
   try {
@@ -40,19 +39,45 @@ export async function getAllTags({
     const query: FilterQuery<typeof Tag> = {};
 
     if (searchQuery) {
-      query.$or = [
-        { name: { $regex: new RegExp(searchQuery, 'i') } },
-      ];
+      query.$or = [{ name: { $regex: new RegExp(searchQuery, 'i') } }];
     }
 
-    const tags = await Tag.find(query).populate({
-      path: 'questions',
-      model: Question,
-    });
+    let sortOptions = {};
+    switch (filter) {
+      case 'popular':
+        sortOptions = { questions: -1 };
+        break;
+      case 'recent':
+        sortOptions = { createdOn: -1 };
+        break;
+      case 'name':
+        sortOptions = { name: 1 };
+        break;
+      case 'old':
+        sortOptions = { createdOn: 1 };
+        break;
+
+      default:
+        break;
+    }
+
+    const tagsToSkip = (page - 1) * pageSize;
+    const tags = await Tag.find(query)
+      .populate({
+        path: 'questions',
+        model: Question,
+      })
+      .skip(tagsToSkip)
+      .limit(pageSize)
+      .sort(sortOptions);
+
+    const tagsCount = await Tag.countDocuments(query);
 
     if (!tags) throw new Error('No tags available');
 
-    return { tags };
+    const isNext = tagsCount > tagsToSkip + tags.length;
+
+    return { tags, isNext };
   } catch (error) {
     console.log(error);
     throw error;
@@ -60,7 +85,7 @@ export async function getAllTags({
 }
 
 export async function getQuestionsByTagId(params: GetQuestionsByTagIdParams) {
-  const { tagId, page = 1, pageSize = 10, searchQuery } = params;
+  const { tagId, page = 1, pageSize = 2, searchQuery } = params;
   try {
     connectToDatabase();
 
@@ -69,6 +94,7 @@ export async function getQuestionsByTagId(params: GetQuestionsByTagIdParams) {
     //   model: Question,
     // });
     const tagfilter: FilterQuery<ITag> = { _id: tagId };
+    const questionsToSkip = (page - 1) * pageSize;
 
     const tag = await Tag.findOne(tagfilter).populate({
       path: 'questions',
@@ -78,6 +104,8 @@ export async function getQuestionsByTagId(params: GetQuestionsByTagIdParams) {
         : {},
       options: {
         sort: { createdAt: -1 },
+        skip: questionsToSkip,
+        limit: pageSize,
       },
       populate: [
         { path: 'tags', model: Tag, select: '_id name' },
@@ -89,11 +117,12 @@ export async function getQuestionsByTagId(params: GetQuestionsByTagIdParams) {
       ],
     });
 
-    if (!tag) throw new Error('No tag available');
-
+    const questionsCount = await Tag.findOne(tagfilter);
     const questions = tag.questions;
+    const isNext =
+      questionsCount.questions.length > questionsToSkip + questions.length;
 
-    return { tagTitle: tag.name, questions };
+    return { tagTitle: tag.name, questions, isNext };
   } catch (error) {
     console.log(error);
     throw error;

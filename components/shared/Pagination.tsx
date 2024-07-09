@@ -2,45 +2,83 @@
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import React from 'react';
 import { Button } from '../ui/button';
+import { formUrlQuery, removeKeysFromQuery } from '@/lib/utils';
 
-const Pagination = ({ totalPages }: { totalPages: number }) => {
+const Pagination = ({ isNext }: { isNext: boolean }) => {
   const { replace } = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const page = parseInt(searchParams.get('page') || '1');
+  const router = useRouter();
 
-  const goNext = () => {
-    const params = new URLSearchParams(searchParams);
-    params.set('page', (page + 1).toString());
+  // const goNext = () => {
+  // const params = new URLSearchParams(searchParams);
+  // params.set('page', (page + 1).toString());
 
-    replace(`${pathname}?${params.toString()}`);
-  };
+  // replace(`${pathname}?${params.toString()}`);
 
-  const goPrev = () => {
-    const params = new URLSearchParams(searchParams);
-    if (page === 2) {
-      params.delete('page');
-      replace(`${pathname}${params.toString()}`);
+  //   const newUrl = formUrlQuery({
+  //     params: searchParams.toString(),
+  //     key: 'page',
+  //     value: (page + 1).toString(),
+  //   });
+  //   router.push(newUrl);
+  // };
+
+  // const goPrev = () => {
+  //   if (page === 2) {
+  //     const newUrl = removeKeysFromQuery({
+  //       params: searchParams.toString(),
+  //       keys: ['page'],
+  //     });
+  //     router.push(newUrl, { scroll: false });
+  //     return;
+  //   }
+
+  //   const newUrl = formUrlQuery({
+  //     params: searchParams.toString(),
+  //     key: 'page',
+  //     value: (page - 1).toString(),
+  //   });
+  //   router.push(newUrl);
+  // };
+
+  const handleNavegation = (direction: string) => {
+    if (page === 2 && direction === 'prev') {
+      const newUrl = removeKeysFromQuery({
+        params: searchParams.toString(),
+        keys: ['page'],
+      });
+      router.push(newUrl, { scroll: false });
       return;
     }
-
-    params.set('page', (page - 1).toString());
-    replace(`${pathname}?${params.toString()}`);
+    const newPage = direction === 'next' ? page + 1 : page - 1;
+    const newUrl = formUrlQuery({
+      params: searchParams.toString(),
+      key: 'page',
+      value: newPage.toString(),
+    });
+    router.push(newUrl);
   };
+
+  if (!isNext && page === 1) return null;
+
   return (
     <div className="mb-10 flex items-center justify-center gap-5">
       <Button
-        onClick={goPrev}
+        onClick={() => handleNavegation('prev')}
         disabled={page === 1}
-        className="paragraph-medium btn text-dark300_light900  px-4 py-2"
+        className="paragraph-medium btn text-dark300_light900  light-border-2 px-4 py-2"
       >
         Prev
       </Button>
-      <p className="primary-gradient rounded-lg px-[14px] py-2">{page}</p>
+      <p className="body-semibold primary-gradient rounded-lg px-[14px] py-2">
+        {page}
+      </p>
       <Button
-        onClick={goNext}
-        disabled={totalPages === page}
-        className="paragraph-medium btn text-dark300_light900  px-[14px] py-2"
+        onClick={() => handleNavegation('next')}
+        disabled={!isNext}
+        className="paragraph-medium btn text-dark300_light900  light-border-2 px-[14px] py-2"
       >
         Next
       </Button>

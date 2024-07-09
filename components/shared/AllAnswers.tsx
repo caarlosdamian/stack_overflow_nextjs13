@@ -7,15 +7,26 @@ import Image from 'next/image';
 import { getTimestamp } from '@/lib/utils';
 import ParseHTML from './ParseHTML';
 import Votes from './Votes';
+import Pagination from './Pagination';
 
 interface Props {
   questionId: string;
   userId: string;
   totalAnswers: number;
+  searchParams: { [key: string]: string | undefined };
 }
 
-const AllAnswers = async ({ userId, totalAnswers, questionId }: Props) => {
-  const result = await getAnswers({ questionId });
+const AllAnswers = async ({
+  userId,
+  totalAnswers,
+  questionId,
+  searchParams,
+}: Props) => {
+  const result = await getAnswers({
+    questionId,
+    sortBy: searchParams.filter,
+    page: searchParams.page ? +searchParams.page : 1,
+  });
 
   return (
     <div className="mt-11">
@@ -24,7 +35,7 @@ const AllAnswers = async ({ userId, totalAnswers, questionId }: Props) => {
         <Filter filters={AnswerFilters} />
       </div>
       <div className="">
-        {result.map((answer) => (
+        {result.answers.map((answer) => (
           <article key={answer._id} className="light-border border-b py-10">
             <div className="flex items-center justify-between">
               {/* Span id */}
@@ -66,6 +77,9 @@ const AllAnswers = async ({ userId, totalAnswers, questionId }: Props) => {
             <ParseHTML data={answer.content} />
           </article>
         ))}
+      </div>
+      <div className="mt-10 w-full">
+        <Pagination isNext={result.isNext} />
       </div>
     </div>
   );

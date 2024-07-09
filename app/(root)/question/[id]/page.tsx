@@ -8,13 +8,15 @@ import { ITag } from '@/database/tag.model';
 import { getQuestionById } from '@/lib/actions/question.action';
 import { getUserById } from '@/lib/actions/user.action';
 import { formatAndDivideNumber, getTimestamp } from '@/lib/utils';
-import { ParamsProps } from '@/types';
+import { ParamsProps, SearchParamsProps } from '@/types';
 import { auth } from '@clerk/nextjs';
 import Image from 'next/image';
 import Link from 'next/link';
 import React from 'react';
 
-const Page = async ({ params }: ParamsProps) => {
+interface Props extends SearchParamsProps, ParamsProps {}
+
+const Page = async ({ params, searchParams }: Props) => {
   const question = await getQuestionById({ questionId: params.id });
   const { userId: clerkId } = auth();
 
@@ -96,6 +98,7 @@ const Page = async ({ params }: ParamsProps) => {
         questionId={question._id}
         userId={mongoUser._id}
         totalAnswers={question.answers?.length}
+        searchParams={searchParams}
       />
 
       <Answer

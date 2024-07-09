@@ -15,11 +15,10 @@ import User from '@/database/user.model';
 import { revalidatePath } from 'next/cache';
 import Answer from '@/database/answer.model';
 import Interaction from '@/database/interaction.model';
-import console from 'console';
 import { FilterQuery, ObjectId } from 'mongoose';
 
 export async function getQuestions(params: GetQuestionsParams) {
-  const { filter, page, pageSize, searchQuery } = params;
+  const { filter, page = 1, pageSize = 10, searchQuery } = params;
   try {
     connectToDatabase();
 
@@ -32,13 +31,35 @@ export async function getQuestions(params: GetQuestionsParams) {
       ];
     }
 
+    let sortOptions = {};
+    switch (filter) {
+      case 'frequent':
+        sortOptions = { views: -1 };
+        break;
+      case 'unanswered':
+        query.answers = { $size: 0 };
+        break;
+      case 'newest':
+        sortOptions = { createdAt: -1 };
+        break;
+
+      default:
+        break;
+    }
+
+    const questionsToSkip = (page - 1) * pageSize;
     const questions = await Question.find(query)
       .populate({ path: 'tags', model: Tag })
       .populate({ path: 'author', model: User })
-      .sort({ createdAt: -1 });
+      .skip(questionsToSkip)
+      .limit(pageSize)
+      .sort(sortOptions);
 
+    const totalQuestions = await Question.countDocuments(query);
+   
+    const isNext = totalQuestions > questionsToSkip + questions.length;
 
-    return { questions };
+    return { questions, isNext };
   } catch (error) {
     console.log(error);
     throw error;
