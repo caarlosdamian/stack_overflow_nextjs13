@@ -1,0 +1,101 @@
+import { GlobalSearchFilters } from '@/constants/filters';
+import React, { useEffect, useState } from 'react';
+import { Button } from '../ui/button';
+import clsx from 'clsx';
+import { formUrlQuery } from '@/lib/utils';
+import { useRouter, useSearchParams } from 'next/navigation';
+import Image from 'next/image';
+import Link from 'next/link';
+import { ReloadIcon } from '@radix-ui/react-icons';
+import GlobalFilters from './search/GlobalFilters';
+import { getResultFilter } from '@/lib/actions/filter.action';
+
+const GlobalResult = () => {
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const global = searchParams.get('global');
+  const type = searchParams.get('type');
+  const [isLoading, setIsLoading] = useState(false);
+  const [result, setResult] = useState([
+    { type: 'question', id: 1, title: 'Nextjs' },
+  ]);
+
+  console.log('result', result.length);
+  useEffect(() => {
+    const fetchResult = async () => {
+      setIsLoading(true);
+      try {
+        //
+        // GLOBAL SEARCH
+        await getResultFilter({ query: global, type });
+      } catch (error) {
+        console.log(error);
+        throw new Error();
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchResult();
+  }, [global, type]);
+
+  const renderLink = (type: string | null, id: string) => '';
+  //
+  return (
+    <div className="absolute top-full z-10 mt-3 w-full rounded-xl bg-light-800 py-5 shadow-sm dark:bg-dark-400">
+      <div className="flex items-center justify-start gap-5 px-6 pb-6">
+        <p className="base-semibold text-dark400_light800">Type:</p>
+        <GlobalFilters />
+      </div>
+      <div className="h-px w-full border-none bg-light-700/50 dark:bg-dark-500/50"></div>
+      <div className="flex flex-col space-y-5 pb-6">
+        <p className="text-dark400_light900 paragraph-semibold px-5 pt-6">
+          Top Match
+        </p>
+        {isLoading ? (
+          <div className="flex-center flex-col px-5">
+            <ReloadIcon className="my-2 size-10 animate-spin text-primary-500" />
+            <p className="text-dark200_light800 body-regular">
+              Browsing the entire database
+            </p>
+          </div>
+        ) : result.length !== 0 ? (
+          <div className="flex flex-col gap-2">
+            {result.map((item, index) => (
+              <Link
+                href={renderLink(type, index)}
+                key={item.type + item.id + index}
+                className=" flex w-full cursor-pointer items-start gap-3 px-5 py-2.5 hover:bg-light-700/50 dark:hover:bg-dark-500/50"
+              >
+                <Image
+                  src="/assets/icons/tag.svg"
+                  alt="tag"
+                  className="invert-colors mt-1 object-contain"
+                  width={18}
+                  height={18}
+                />
+                <div className="flex flex-col">
+                  <p className="body-medium text-dark200_light800 line-clamp-1">
+                    Best practices for data fetching in a Next.js application
+                    with Server-Side Rendering (SSR)?
+                  </p>
+                  <p className="text-light400_light500 small-medium mt-1 font-bold capitalize">
+                    question
+                  </p>
+                </div>
+              </Link>
+            ))}
+          </div>
+        ) : (
+          <div className="flex-center flex-col px-5">
+            <p className="text-5xl">🫣</p>
+            <p className="text-dark200_light800 body-regular px-5 py-2.5">
+              Oops, no results found
+            </p>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
+export default GlobalResult;
