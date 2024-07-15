@@ -1,14 +1,11 @@
-import { GlobalSearchFilters } from '@/constants/filters';
+'use client';
 import React, { useEffect, useState } from 'react';
-import { Button } from '../ui/button';
-import clsx from 'clsx';
-import { formUrlQuery } from '@/lib/utils';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
 import { ReloadIcon } from '@radix-ui/react-icons';
 import GlobalFilters from './search/GlobalFilters';
-import { getResultFilter } from '@/lib/actions/filter.action';
+import { globalSearch } from '@/lib/actions/general.action';
 
 const GlobalResult = () => {
   const searchParams = useSearchParams();
@@ -16,29 +13,44 @@ const GlobalResult = () => {
   const global = searchParams.get('global');
   const type = searchParams.get('type');
   const [isLoading, setIsLoading] = useState(false);
-  const [result, setResult] = useState([
-    { type: 'question', id: 1, title: 'Nextjs' },
-  ]);
+  const [result, setResult] = useState([]);
 
-  console.log('result', result.length);
+  console.log('result', { result });
   useEffect(() => {
     const fetchResult = async () => {
       setIsLoading(true);
       try {
         //
         // GLOBAL SEARCH
-        await getResultFilter({ query: global, type });
+        const res = await globalSearch({ query: global, type });
+        setResult(JSON.parse(res));
+        console.log({res})
       } catch (error) {
-        console.log(error);
         throw new Error();
       } finally {
         setIsLoading(false);
       }
     };
-    fetchResult();
+    if (global) {
+      fetchResult();
+    }
   }, [global, type]);
 
-  const renderLink = (type: string | null, id: string) => '';
+  const renderLink = (type: string | null, id: string) => {
+    switch (type) {
+      case 'question':
+        return `/question/${id}`;
+      case 'tag':
+        return `/tags/${id}`;
+      case 'answer':
+        return `/question/${id}`;
+      case 'user':
+        return `/profile/${id}`;
+
+      default:
+        return '/';
+    }
+  };
   //
   return (
     <div className="absolute top-full z-10 mt-3 w-full rounded-xl bg-light-800 py-5 shadow-sm dark:bg-dark-400">
@@ -62,7 +74,7 @@ const GlobalResult = () => {
           <div className="flex flex-col gap-2">
             {result.map((item, index) => (
               <Link
-                href={renderLink(type, index)}
+                href={renderLink(item.type, item.id)}
                 key={item.type + item.id + index}
                 className=" flex w-full cursor-pointer items-start gap-3 px-5 py-2.5 hover:bg-light-700/50 dark:hover:bg-dark-500/50"
               >
@@ -75,11 +87,10 @@ const GlobalResult = () => {
                 />
                 <div className="flex flex-col">
                   <p className="body-medium text-dark200_light800 line-clamp-1">
-                    Best practices for data fetching in a Next.js application
-                    with Server-Side Rendering (SSR)?
+                    {item.title}
                   </p>
                   <p className="text-light400_light500 small-medium mt-1 font-bold capitalize">
-                    question
+                    {item.type}
                   </p>
                 </div>
               </Link>

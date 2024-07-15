@@ -5,7 +5,6 @@ import { Input } from '@/components/ui/input';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { formUrlQuery, removeKeysFromQuery } from '@/lib/utils';
 import GlobalResult from '../GlobalResult';
-import { getResultFilter } from '@/lib/actions/filter.action';
 
 const GlobalSearch = () => {
   const searchParams = useSearchParams();
@@ -59,6 +58,9 @@ const GlobalSearch = () => {
       document.removeEventListener('click', handleClickOutside, true);
     };
   }, [router, searchParams]);
+  useEffect(() => {
+    setIsOpen(false);
+  }, [pathname]);
 
   return (
     <div className="relative w-full max-w-[600px] max-lg:hidden" ref={ref}>
