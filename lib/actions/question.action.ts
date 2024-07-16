@@ -95,6 +95,13 @@ export async function createQuestion(params: CreateQuestionParams) {
       $push: { tags: { $each: tagDocuments } },
     });
 
+    await Interaction.create({
+      user: author,
+      action: 'ask_question',
+      question: question._id,
+      tags: tagDocuments,
+    });
+
     await User.findOneAndUpdate(question.author, {
       $inc: { reputation: 5 },
     });
@@ -134,9 +141,6 @@ export async function upvoteQuestion({
   userId,
 }: QuestionVoteParams) {
   try {
-    console.log('userId', userId);
-    console.log('questionId+++++', questionId);
-
     connectToDatabase();
     let updateQuery: any = {};
     if (hasupVoted) {
@@ -158,14 +162,16 @@ export async function upvoteQuestion({
     });
 
     if (!question) throw new Error('Question not found');
-    if (JSON.parse(question.author) !== userId) {
-      console.log('Entrnod',JSON.parse(question.author),'id',userId)
+    if (JSON.stringify(question.author) !== JSON.stringify(userId)) {
       await User.findOneAndUpdate(
         { _id: userId },
         {
-          $inc: { reputation: hasupVoted ? 1 : -1 },
+          $inc: { reputation: hasupVoted ? -1 : 1 },
         }
       );
+      await User.findOneAndUpdate(question.author, {
+        $inc: { reputation: 10 },
+      });
     }
     // Increment authors reputation
 
@@ -207,6 +213,17 @@ export async function donwvoteQuestion({
     if (!question) throw new Error('Question not found');
     // Increment authors reputation
 
+    if (JSON.stringify(question.author) !== JSON.stringify(userId)) {
+      await User.findOneAndUpdate(
+        { _id: userId },
+        {
+          $inc: { reputation: -1 },
+        }
+      );
+      await User.findOneAndUpdate(question.author, {
+        $inc: { reputation: -2 },
+      });
+    }
     revalidatePath(path);
   } catch (error) {
     console.log(error);
