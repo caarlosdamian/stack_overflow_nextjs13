@@ -56,7 +56,7 @@ export async function getQuestions(params: GetQuestionsParams) {
       .sort(sortOptions);
 
     const totalQuestions = await Question.countDocuments(query);
-   
+
     const isNext = totalQuestions > questionsToSkip + questions.length;
 
     return { questions, isNext };
@@ -95,9 +95,9 @@ export async function createQuestion(params: CreateQuestionParams) {
       $push: { tags: { $each: tagDocuments } },
     });
 
-    // Create an interaction record for the user's ask_question action
-
-    // Increment author's reputation by +5 for creating a question
+    await User.findOneAndUpdate(question.author, {
+      $inc: { reputation: 5 },
+    });
 
     revalidatePath(path);
   } catch (error) {}
@@ -134,6 +134,9 @@ export async function upvoteQuestion({
   userId,
 }: QuestionVoteParams) {
   try {
+    console.log('userId', userId);
+    console.log('questionId+++++', questionId);
+
     connectToDatabase();
     let updateQuery: any = {};
     if (hasupVoted) {
@@ -155,6 +158,15 @@ export async function upvoteQuestion({
     });
 
     if (!question) throw new Error('Question not found');
+    if (JSON.parse(question.author) !== userId) {
+      console.log('Entrnod',JSON.parse(question.author),'id',userId)
+      await User.findOneAndUpdate(
+        { _id: userId },
+        {
+          $inc: { reputation: hasupVoted ? 1 : -1 },
+        }
+      );
+    }
     // Increment authors reputation
 
     revalidatePath(path);
