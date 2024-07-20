@@ -43,6 +43,7 @@ const GlobalSearch = () => {
   }, [search, pathname, searchParams, router, query]);
 
   useEffect(() => {
+    // @ts-ignore
     const handleClickOutside = (event) => {
       if (ref.current && !ref.current.contains(event.target)) {
         resetStates();

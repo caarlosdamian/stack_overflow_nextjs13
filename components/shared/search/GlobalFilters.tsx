@@ -4,7 +4,6 @@ import { GlobalSearchFilters } from '@/constants/filters';
 import { formUrlQuery } from '@/lib/utils';
 import clsx from 'clsx';
 import { useSearchParams, useRouter } from 'next/navigation';
-import { type } from 'os';
 import React, { useState } from 'react';
 
 // build out ui

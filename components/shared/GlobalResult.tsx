@@ -1,6 +1,6 @@
 'use client';
 import React, { useEffect, useState } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
 import { ReloadIcon } from '@radix-ui/react-icons';
@@ -9,7 +9,6 @@ import { globalSearch } from '@/lib/actions/general.action';
 
 const GlobalResult = () => {
   const searchParams = useSearchParams();
-  const router = useRouter();
   const global = searchParams.get('global');
   const type = searchParams.get('type');
   const [isLoading, setIsLoading] = useState(false);
@@ -24,7 +23,7 @@ const GlobalResult = () => {
         // GLOBAL SEARCH
         const res = await globalSearch({ query: global, type });
         setResult(JSON.parse(res));
-        console.log({res})
+        console.log({ res });
       } catch (error) {
         throw new Error();
       } finally {
@@ -74,7 +73,9 @@ const GlobalResult = () => {
           <div className="flex flex-col gap-2">
             {result.map((item, index) => (
               <Link
+                // @ts-ignore
                 href={renderLink(item.type, item.id)}
+                // @ts-ignore
                 key={item.type + item.id + index}
                 className=" flex w-full cursor-pointer items-start gap-3 px-5 py-2.5 hover:bg-light-700/50 dark:hover:bg-dark-500/50"
               >
@@ -87,9 +88,11 @@ const GlobalResult = () => {
                 />
                 <div className="flex flex-col">
                   <p className="body-medium text-dark200_light800 line-clamp-1">
+                    {/* @ts-ignore */}
                     {item.title}
                   </p>
                   <p className="text-light400_light500 small-medium mt-1 font-bold capitalize">
+                    {/* @ts-ignore */}
                     {item.type}
                   </p>
                 </div>

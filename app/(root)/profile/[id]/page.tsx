@@ -81,6 +81,8 @@ const Profile = async ({
       <Stats
         totalQuestions={userInfo.totalQuestions}
         totalAnswers={userInfo.totalAnswers}
+        badgeCounts={userInfo.badgeCounts}
+        reputation={userInfo.reputation}
       />
 
       <div className="mt-10 flex gap-10">

@@ -1,12 +1,10 @@
 'use client';
-import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import React from 'react';
 import { Button } from '../ui/button';
 import { formUrlQuery, removeKeysFromQuery } from '@/lib/utils';
 
 const Pagination = ({ isNext }: { isNext: boolean }) => {
-  const { replace } = useRouter();
-  const pathname = usePathname();
   const searchParams = useSearchParams();
   const page = parseInt(searchParams.get('page') || '1');
   const router = useRouter();

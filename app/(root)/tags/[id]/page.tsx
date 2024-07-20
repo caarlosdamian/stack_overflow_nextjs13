@@ -7,12 +7,18 @@ import { getQuestionsByTagId } from '@/lib/actions/tag.action';
 import { SearchParamsProps } from '@/types';
 import { Params } from 'next/dist/shared/lib/router/utils/route-matcher';
 
-interface Props extends Params, SearchParamsProps {}
-
-export default async function Home({ searchParams, params }: Props) {
+export default async function Home({
+  searchParams,
+  params,
+}: {
+  searchParams: SearchParamsProps;
+  params: Params;
+}) {
   const result = await getQuestionsByTagId({
     tagId: params.id,
+    // @ts-ignore
     page: searchParams.page ? +searchParams.page : 1,
+    // @ts-ignore
     searchQuery: searchParams.q,
   });
 
