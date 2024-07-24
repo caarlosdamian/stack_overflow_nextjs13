@@ -1,9 +1,7 @@
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Link } from 'lucide-react';
 
 export default function Loading() {
-  // You can add any UI inside Loading, including a Skeleton.
   return (
     <section>
       <div className="flex w-full flex-col-reverse justify-between gap-4 sm:flex-row sm:items-center">
@@ -34,14 +32,6 @@ export default function Loading() {
             <Skeleton key={index} className="h-48 w-full rounded-xl" />
           ))}
       </div>
-      {/* 
-      <div className="mt-11 flex justify-between gap-5 max-sm:flex-col sm:items-center">
-        <Skeleton className="background-light800_darkgradient flex min-h-[56px] grow items-center gap-4 rounded-[10px] px-4" />
-
-        <Skeleton className="min-h-[56px] sm:min-w-[170px]" />
-      </div>
-
-      <Skeleton className="mt-10 hidden flex-wrap gap-3 md:flex" /> */}
     </section>
   );
 }
