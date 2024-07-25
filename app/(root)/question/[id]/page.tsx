@@ -10,11 +10,23 @@ import { getUserById } from '@/lib/actions/user.action';
 import { formatAndDivideNumber, getTimestamp } from '@/lib/utils';
 import { ParamsProps, SearchParamsProps } from '@/types';
 import { auth } from '@clerk/nextjs';
+import { Metadata, ResolvingMetadata } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
 import React from 'react';
 
 interface Props extends SearchParamsProps, ParamsProps {}
+
+export async function generateMetadata(
+  { params, searchParams }: Props,
+  parent: ResolvingMetadata
+): Promise<Metadata> {
+  const question = await getQuestionById({ questionId: params.id });
+
+  return {
+    title: question.title,
+  };
+}
 
 const Page = async ({ params, searchParams }: Props) => {
   const question = await getQuestionById({ questionId: params.id });
