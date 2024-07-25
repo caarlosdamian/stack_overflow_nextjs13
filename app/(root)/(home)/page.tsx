@@ -6,8 +6,9 @@ import Pagination from '@/components/shared/Pagination';
 import LocalSearchbar from '@/components/shared/search/LocalSearchbar';
 import { Button } from '@/components/ui/button';
 import { HomePageFilters } from '@/constants/filters';
-import { getQuestions } from '@/lib/actions/question.action';
+import { getQuestions, getRecommendedQuestions } from '@/lib/actions/question.action';
 import { SearchParamsProps } from '@/types';
+import { auth } from '@clerk/nextjs';
 import { Metadata } from 'next';
 import Link from 'next/link';
 
@@ -19,12 +20,30 @@ export const metadata: Metadata = {
 export default async function Home({
   searchParams: { q, filter, page = '1' },
 }: SearchParamsProps) {
-  const result = await getQuestions({
-    searchQuery: q,
-    filter,
-    page: +page || 1,
-  });
+  const { userId } = auth();
 
+  let result;
+
+  if (filter === 'recommended') {
+    if (userId) {
+      result = await getRecommendedQuestions({
+        userId,
+        searchQuery: q,
+        page: page ? +page : 1,
+      });
+    } else {
+      result = {
+        questions: [],
+        isNext: false,
+      };
+    }
+  } else {
+    result = await getQuestions({
+      searchQuery: q,
+      filter,
+      page: page ? +page : 1,
+    });
+  }
   return (
     <>
       <div className="flex w-full flex-col-reverse justify-between gap-4 sm:flex-row sm:items-center">
