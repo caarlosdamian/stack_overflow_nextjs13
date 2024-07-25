@@ -39,7 +39,7 @@ const RightSidebar = async () => {
             hotQuestions.map((question: IQuestion) => (
               <Link
                 href={`/question/${question._id}`}
-                key={question._id}
+                key={question._id as any}
                 className="flex cursor-pointer items-center justify-between gap-7"
               >
                 <p className="body-medium text-dark500_light700">

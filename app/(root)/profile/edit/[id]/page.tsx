@@ -1,6 +1,6 @@
 import Profile from '@/components/forms/Profile';
 import { getUserById } from '@/lib/actions/user.action';
-import { auth } from '@clerk/nextjs';
+import { auth } from '@clerk/nextjs/server';
 import React from 'react';
 
 const EditProfilePage = async () => {

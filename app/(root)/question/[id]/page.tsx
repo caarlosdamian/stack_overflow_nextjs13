@@ -9,7 +9,7 @@ import { getQuestionById } from '@/lib/actions/question.action';
 import { getUserById } from '@/lib/actions/user.action';
 import { formatAndDivideNumber, getTimestamp } from '@/lib/utils';
 import { ParamsProps, SearchParamsProps } from '@/types';
-import { auth } from '@clerk/nextjs';
+import { auth } from '@clerk/nextjs/server';
 import { Metadata, ResolvingMetadata } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -99,8 +99,8 @@ const Page = async ({ params, searchParams }: Props) => {
       <div className="mt-8 flex flex-wrap gap-4">
         {question.tags.map((tag: ITag) => (
           <RenderTag
-            key={tag._id}
-            _id={tag._id}
+            key={tag._id as any}
+            _id={tag._id as any}
             name={tag.name}
             showCount={false}
           />
