@@ -15,8 +15,9 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { ProfileSchema } from '@/lib/validations';
 import { z } from 'zod';
 import { updateUser } from '@/lib/actions/user.action';
-import { usePathname,useRouter } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { Textarea } from '../ui/textarea';
+import { useToast } from '../ui/use-toast';
 
 interface Props {
   defaultValues: z.infer<typeof ProfileSchema>;
@@ -25,6 +26,7 @@ interface Props {
 
 const Profile = ({ defaultValues, userId }: Props) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const { toast } = useToast();
   const router = useRouter();
   const pathname = usePathname();
   const form = useForm({
@@ -38,12 +40,14 @@ const Profile = ({ defaultValues, userId }: Props) => {
     },
   });
 
-
   const onSubmit = async (values: z.infer<typeof ProfileSchema>) => {
     setIsSubmitting(true);
     try {
       await updateUser({ clerkId: userId, path: pathname, updateData: values });
-      router.back()
+      toast({
+        title: 'Profile Saved succesfully',
+      });
+      router.back();
     } catch (error) {
       console.log(error);
     } finally {

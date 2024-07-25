@@ -29,7 +29,7 @@ const Page = async ({ params, searchParams }: Props) => {
       <div className="flex-start w-full flex-col">
         <div className="flex w-full flex-col-reverse justify-between gap-5 sm:flex-row sm:items-center sm:gap-2">
           <Link
-            href={`/profile/${mongoUser._id}`}
+            href={`/profile/${mongoUser?._id}`}
             className="flex items-center justify-start gap-1"
           >
             <Image
@@ -96,7 +96,7 @@ const Page = async ({ params, searchParams }: Props) => {
       </div>
       <AllAnswers
         questionId={question._id}
-        userId={mongoUser._id}
+        userId={mongoUser?._id}
         totalAnswers={question.answers?.length}
         searchParams={searchParams}
       />
@@ -104,7 +104,7 @@ const Page = async ({ params, searchParams }: Props) => {
       <Answer
         question={question.content}
         questionId={question._id}
-        authorId={mongoUser._id}
+        authorId={mongoUser?._id}
       />
     </>
   );

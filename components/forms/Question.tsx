@@ -21,6 +21,7 @@ import Image from 'next/image';
 import { createQuestion, editQuestion } from '@/lib/actions/question.action';
 import { useRouter, usePathname } from 'next/navigation';
 import { useTheme } from '@/context/ThemeProvider';
+import { useToast } from '../ui/use-toast';
 
 interface Props {
   mongoUserId: string;
@@ -40,6 +41,7 @@ const Question = ({
   const router = useRouter();
   const { mode } = useTheme();
   const pathname = usePathname();
+  const { toast } = useToast();
   // 1. Define your form.
   const form = useForm<z.infer<typeof QuestionsSchema>>({
     resolver: zodResolver(QuestionsSchema),
@@ -65,6 +67,9 @@ const Question = ({
           path: pathname,
           questionId,
         });
+        toast({
+          title: 'Question Saved succesfully',
+        });
         router.push(`/question/${questionId}`);
       } else {
         await createQuestion({
@@ -73,6 +78,9 @@ const Question = ({
           tags: values.tags,
           author: JSON.parse(mongoUserId),
           path: pathname,
+        });
+        toast({
+          title: 'Question Saved succesfully',
         });
         router.push('/');
       }

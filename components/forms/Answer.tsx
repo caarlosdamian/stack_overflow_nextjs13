@@ -17,6 +17,7 @@ import { Button } from '../ui/button';
 import Image from 'next/image';
 import { createAnswer } from '@/lib/actions/answer.action';
 import { usePathname } from 'next/navigation';
+import { useToast } from '../ui/use-toast';
 
 interface Props {
   question: string;
@@ -27,6 +28,7 @@ interface Props {
 const Answer = ({ authorId, question, questionId }: Props) => {
   const editorRef = useRef(null);
   const pathname = usePathname();
+  const { toast } = useToast();
   const { mode } = useTheme();
   const [isSubmiting, setIsSubmiting] = useState(false);
   const [isSubmittingAI, setIsSubmittingAI] = useState(false);
@@ -38,6 +40,13 @@ const Answer = ({ authorId, question, questionId }: Props) => {
   });
 
   const handleCreateAnswer = async (values: z.infer<typeof AnswerSchema>) => {
+    if (!authorId) {
+      toast({
+        title: 'Please log in',
+        description: 'You must be logged in to perform this action',
+      });
+      return;
+    }
     setIsSubmiting(true);
     try {
       await createAnswer({
@@ -51,6 +60,10 @@ const Answer = ({ authorId, question, questionId }: Props) => {
         const editor = editorRef.current as any;
         editor.setContent('');
       }
+      toast({
+        title: 'AnswerPosted',
+        description: 'You answer has been succesfully posted.',
+      });
     } catch (error) {
     } finally {
       setIsSubmiting(false);
@@ -58,7 +71,13 @@ const Answer = ({ authorId, question, questionId }: Props) => {
   };
 
   const generateAIAnswer = async () => {
-    if (!authorId) return;
+    if (!authorId) {
+      toast({
+        title: 'Please log in',
+        description: 'You must be logged in to perform this action',
+      });
+      return;
+    }
     setIsSubmittingAI(true);
     console.log('question', question);
     try {
@@ -71,7 +90,6 @@ const Answer = ({ authorId, question, questionId }: Props) => {
       );
       const aiAnswer = await response.json();
       const formattedAnswer = aiAnswer.reply.replace(/\n/g, '<br/>');
-      console.log(formattedAnswer);
       if (editorRef.current) {
         const editor = editorRef.current as any;
         editor.setContent(formattedAnswer);

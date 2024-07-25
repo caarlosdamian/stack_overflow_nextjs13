@@ -10,6 +10,7 @@ import { formatAndDivideNumber } from '@/lib/utils';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { useEffect } from 'react';
+import { useToast } from '../ui/use-toast';
 
 interface Props {
   type: string;
@@ -33,16 +34,30 @@ const Votes = ({
   hasSaved,
 }: Props) => {
   const path = usePathname();
+  const { toast } = useToast();
 
   const handleSave = async () => {
-    if (!userId) return;
+    if (!userId) {
+      return toast({
+        title: 'Please log in',
+        description: 'You must be logged in to perform this action',
+      });
+    }
     await toggleSaveQuestion({ path, questionId: itemId, userId });
+    toast({
+      title: `Question ${!hasSaved ? 'Save in' : 'Removed'}`,
+      variant: !hasSaved ? 'default' : 'destructive',
+    });
   };
 
   const handleVote = async (typeofVote: 'upvote' | 'downvote') => {
     if (!userId) {
-      return;
+      return toast({
+        title: 'Please log in',
+        description: 'You must be logged in to perform this action',
+      });
     }
+
     if (typeofVote === 'upvote') {
       if (type === 'question') {
         await upvoteQuestion({
@@ -52,6 +67,7 @@ const Votes = ({
           questionId: itemId,
           userId,
         });
+
       } else {
         await upvoteAnswer({
           hasdownVoted,
@@ -61,6 +77,10 @@ const Votes = ({
           userId,
         });
       }
+      toast({
+        title: `Upvote ${!hasupVoted ? 'Succesfull' : 'Removed'}`,
+        variant: !hasupVoted ? 'default' : 'destructive',
+      });
     } else {
       if (type === 'question') {
         await donwvoteQuestion({
@@ -79,6 +99,10 @@ const Votes = ({
           userId,
         });
       }
+      toast({
+        title: `DownVote ${!hasupVoted ? 'Succesfull' : 'Removed'}`,
+        variant: !hasupVoted ? 'default' : 'destructive',
+      });
     }
   };
 
