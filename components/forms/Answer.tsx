@@ -79,7 +79,6 @@ const Answer = ({ authorId, question, questionId }: Props) => {
       return;
     }
     setIsSubmittingAI(true);
-    console.log('question', question);
     try {
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_SERVER_URL}/api/chatgpt`,
@@ -101,7 +100,6 @@ const Answer = ({ authorId, question, questionId }: Props) => {
       setIsSubmittingAI(false);
     }
   };
-  console.log(form.watch());
   return (
     <div className="">
       <div className="flex flex-col justify-between gap-5 sm:flex-row sm:items-center sm:gap-2">

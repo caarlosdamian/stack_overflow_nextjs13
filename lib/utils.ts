@@ -137,3 +137,32 @@ export const assingBadges = (params: BadgeParams) => {
   });
   return badgeCounts;
 };
+
+export function formatLocation(
+  city: string | null,
+  state: string | null,
+  country: string | null
+) {
+  const parts = [];
+
+  if (city) {
+    parts.push(city);
+  }
+
+  if (state) {
+    parts.push(state);
+  }
+
+  if (country) {
+    parts.push(country);
+  }
+
+  return parts.join(',');
+}
+
+export function formatSalaryRange(min: string | null, max: string | null) {
+  if (min !== null && max !== null) {
+    return `${min}-${max}`;
+  }
+  return 'Not disclosed';
+}
