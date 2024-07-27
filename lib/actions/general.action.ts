@@ -48,7 +48,6 @@ export async function globalSearch({ query, type }: SearchParams) {
     } else {
       // search model type
       const modelInfo = modelsAndTypes.find((item) => item.type === type);
-        console.log({modelInfo})
       if (!modelInfo) {
         throw new Error('invalid search');
       }
@@ -58,20 +57,6 @@ export async function globalSearch({ query, type }: SearchParams) {
           [modelInfo.searchField]: regexQuery,
         })
         .limit(8);
-
-        console.log('testing:',queryResults.map((item) => ({
-          title:
-            type === 'answer'
-              ? `Answers Containing ${query}`
-              : item[modelInfo.searchField],
-          type,
-          id:
-            type === 'user'
-              ? item.clerkId
-              : type === 'answer'
-                ? item.question
-                : item._id,
-        })))
 
       results = queryResults.map((item) => ({
         title:
