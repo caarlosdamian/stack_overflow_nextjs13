@@ -14,7 +14,6 @@ const GlobalResult = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [result, setResult] = useState([]);
 
-  console.log('result', { result });
   useEffect(() => {
     const fetchResult = async () => {
       setIsLoading(true);
@@ -23,7 +22,6 @@ const GlobalResult = () => {
         // GLOBAL SEARCH
         const res = await globalSearch({ query: global, type });
         setResult(JSON.parse(res));
-        console.log({ res });
       } catch (error) {
         throw new Error();
       } finally {

@@ -26,7 +26,10 @@ export const getJobDetailsList = async (
 ): Promise<{ results: JobI[] } | undefined> => {
   const { page, filter, searchQuery } = params;
   const searchQueryParse = searchQuery?.split(' ').join('%20');
-  const url = `https://jsearch.p.rapidapi.com/search?query=${searchQueryParse || 'developers'}&in%20${filter || 'usa'}&page=${page}`;
+  const { country } = await fetch('http://ip-api.com/json/').then((response) =>
+    response.json()
+  );
+  const url = `https://jsearch.p.rapidapi.com/search?query=${searchQueryParse || 'developers'}%20in%20${filter || country}&page=${page}`;
   try {
     const response = await fetch(`${url}`, {
       headers: {

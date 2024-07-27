@@ -19,17 +19,24 @@ interface Props {
   otherClasses?: string;
   containerClasses?: string;
   icon?: string;
+  filter?: string;
 }
 
-const Filter = ({ filters, otherClasses, containerClasses, icon }: Props) => {
+const Filter = ({
+  filters,
+  otherClasses,
+  containerClasses,
+  icon,
+  filter,
+}: Props) => {
   const searchParams = useSearchParams();
   const router = useRouter();
-  const paramFilter = searchParams.get('filter');
+  const paramFilter = searchParams.get(filter || 'filter');
 
   const handleFilter = (value: string) => {
     const newUrl = formUrlQuery({
       params: searchParams.toString(),
-      key: 'filter',
+      key: filter || 'filter',
       value,
     });
     router.push(newUrl);

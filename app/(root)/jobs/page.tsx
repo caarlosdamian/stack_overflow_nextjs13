@@ -13,7 +13,7 @@ export const metadata: Metadata = {
 };
 
 export default async function Home({
-  searchParams: { q, filter, page = '1' },
+  searchParams: { q, location, page = '1' },
 }: SearchParamsProps) {
   const { countriesFilter, flags } = (await getJobFilter()) as {
     flags: { [key: string]: string };
@@ -23,7 +23,7 @@ export default async function Home({
     }[];
   };
   const { results } = (await getJobDetailsList({
-    filter,
+    filter: location,
     page: parseInt(page),
     searchQuery: q,
   })) as { results: JobI[] };
@@ -45,9 +45,9 @@ export default async function Home({
           filters={countriesFilter as unknown as any}
           otherClasses="min-h-[56px] sm:min-w-[170px]"
           icon="/assets/icons/carbon-location.svg"
+          filter="location"
         />
       </div>
-      {/* {result?.countriesFilter.map((item)=>(<span>{item.flag}</span>))} */}
       <div className="mt-10 flex w-full flex-col gap-6">
         {results && results?.length !== 0 ? (
           results?.map((job: JobI) => (
